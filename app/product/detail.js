@@ -29,7 +29,7 @@ export default function ProductDetail() {
 
     console.log(id)
 
-    // Get product detail from store
+    // extracting one string from the id param, which can be a string / array of strings
     const productId = Array.isArray(id) ? id[0] : id;
 
     const {
@@ -39,6 +39,7 @@ export default function ProductDetail() {
     } = useSelector((state) =>
         state.productReducer
     );
+
     const load = () => dispatch(getProductDetail(productId));
 
     useEffect(() => {

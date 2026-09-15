@@ -1,4 +1,45 @@
+How to run the app : 
+1. yarn install
+2. npx expo start
+
+Stack : React Native
+
+Redux: I uses this to handle props and data as multiple screen will be reusing the same data and to handle loading, error logic whihc are repeated across many places. This can avoid duplicating multiple fetch and also without the need to pass props across multiple screen but instead through one shared source.
+
+Flatlist : To handle lazyloading if data is large, onEndReached to allow load more 
+
+Separate layers : 
+1. Data Layer - handle communications - api calls 
+2. Domain layer - handle app states, rules - redux
+3. Presentation layer - user ui interface - the screens, and reusable components
+
+Spliting allow future easier maintainance, readability and easier debugging. 
+
+AI Usage : 
+1. Which library to uses when in planning stage
+2. Guidance usage for some condition (example : in detail.js how to get param from url -> 'useLocalSearchParams' which only triggers re-renders when the current screen parameters change)
+3. Final bug fix and clean up unuse components / file
+
+
+
+
+
+
+
+
+
+
+
 # Welcome to your Expo app 👋
+
+
+
+
+
+
+
+
+
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
