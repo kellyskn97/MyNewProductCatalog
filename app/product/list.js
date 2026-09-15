@@ -1,6 +1,7 @@
 import {
     useEffect,
     useMemo,
+    useRef,
     useState
 } from 'react';
 import {
@@ -9,12 +10,13 @@ import {
     Image,
     Pressable,
     RefreshControl,
-    SafeAreaView,
     StyleSheet,
     Text,
     TextInput,
+    TouchableOpacity,
     View
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
     useDispatch,
     useSelector
@@ -94,6 +96,7 @@ function ProductCard({ product, onPress }) {
 
 export default function Products() {
 
+    // Redux dispatch and state
     const dispatch = useDispatch();
 
     const {
@@ -106,6 +109,7 @@ export default function Products() {
     } = useSelector((state) =>
         state.productReducer);
     const [searchText, setSearchText] = useState('');
+    const ProductListRef = useRef(null);
 
     const search = useDebounce(searchText.trim().toLowerCase());
 
@@ -172,10 +176,41 @@ export default function Products() {
             </Text>
         </View>
 
+        {/* Button Scroll To Top */}
+        <View
+            style={{
+                position: 'absolute',
+                right: 20,
+                bottom: 50,
+                justifyContent: 'center',
+                zIndex: 999
+            }}
+        >
+            <TouchableOpacity
+                style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    paddingTop: 10,
+                    width: 80,
+                    height: 80,
+                    borderRadius: 40,
+                    borderWidth: 5,
+                    borderColor: 'darkgreen',
+                    backgroundColor: 'white',
+                }}
+                onPress={() => {
+                    ProductListRef.current.scrollToOffset({ offset: 0, animated: true });
+                }}
+            >
+                <Text style={{ color: 'darkgreen', fontSize: 60 }}>^</Text>
+            </TouchableOpacity>
+        </View>
+
         {/* Product List */}
         <FlatList
             data={visibleProducts}
             keyExtractor={({ id }) => String(id)}
+            ref={ProductListRef}
             renderItem={({ item }) =>
                 <ProductCard
                     product={item}
@@ -185,6 +220,7 @@ export default function Products() {
                     }
                 />
             }
+
             contentContainerStyle={visibleProducts.length ? styles.list : styles.emptyList}
             onEndReached={loadMore}
             // half of the visible length from the end of the list to trigger
@@ -203,9 +239,9 @@ export default function Products() {
             }
             ListFooterComponent={
                 loadingMore ?
-                    <ActivityIndicator
-                        style={styles.loader} />
-                    : error ?
+                    <ActivityIndicator style={styles.loader} />
+                    :
+                    error ?
                         <Pressable
                             onPress={() => getProducts({ skip: products.length })}>
                             <Text
@@ -213,6 +249,7 @@ export default function Products() {
                             </Text>
                         </Pressable>
                         : null
+
             }
         />
     </SafeAreaView>;
