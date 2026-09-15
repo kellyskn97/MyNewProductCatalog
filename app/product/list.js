@@ -7,7 +7,6 @@ import {
 import {
     ActivityIndicator,
     FlatList,
-    Image,
     Pressable,
     RefreshControl,
     StyleSheet,
@@ -22,6 +21,7 @@ import {
     useSelector
 } from 'react-redux';
 
+import ProductCard from '../../components/ui/ProductCard';
 import {
     getProductList,
     openProductDetail
@@ -63,42 +63,12 @@ function State({ title, message, retry }) {
     </View>;
 }
 
-function ProductCard({ product, onPress }) {
-
-    const [imageError, setImageError] = useState(false);
-
-    return <Pressable
-        style={styles.card}
-        onPress={onPress}>
-
-        {imageError ?
-            <View style={[styles.image,
-            styles.imageError]}>
-                <Text>No image</Text>
-            </View>
-            :
-            <Image
-                source={{ uri: product.thumbnail }}
-                style={styles.image}
-                onError={() => setImageError(true)}
-            />
-        }
-        <View style={styles.cardText}>
-            <Text style={styles.title}
-                numberOfLines={2}>{product.title}
-            </Text>
-            <Text style={styles.price}>
-                RM {product.price.toFixed(2)}
-            </Text>
-        </View>
-    </Pressable>
-}
-
 export default function Products() {
 
     // Redux dispatch and state
     const dispatch = useDispatch();
 
+    // useSelector to select data from result from get product list Redux 
     const {
         productData:
         products,
@@ -106,10 +76,11 @@ export default function Products() {
         loading,
         loadingMore,
         error
-    } = useSelector((state) =>
-        state.productReducer);
+    } = useSelector((state) => state.productReducer);
+
     const [searchText, setSearchText] = useState('');
     const ProductListRef = useRef(null);
+    const [imageError, setImageError] = useState(false);
 
     const search = useDebounce(searchText.trim().toLowerCase());
 
@@ -214,6 +185,8 @@ export default function Products() {
             renderItem={({ item }) =>
                 <ProductCard
                     product={item}
+                    imageError={imageError}
+                    setImageError={setImageError}
                     onPress={() =>
                         // Open product detail page
                         dispatch(openProductDetail(item.id))
@@ -288,38 +261,6 @@ const styles = StyleSheet.create({
     },
     emptyList: {
         flexGrow: 1
-    },
-    card: {
-        minHeight: 120,
-        flexDirection: 'row',
-        overflow: 'hidden',
-        backgroundColor: 'white',
-        borderRadius: 14,
-        elevation: 2
-    },
-    image: {
-        width: 120,
-        height: 120,
-        backgroundColor: 'white',
-    },
-    imageError: {
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    cardText: {
-        flex: 1,
-        justifyContent: 'space-between',
-        padding: 15
-    },
-    title: {
-        color: 'black',
-        fontSize: 17,
-        fontWeight: '600'
-    },
-    price: {
-        color: 'darkgreen',
-        fontSize: 18,
-        fontWeight: '700'
     },
     state: {
         flex: 1,
